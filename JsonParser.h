@@ -11,12 +11,12 @@
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
 
-class Configurator {
+class JsonParser {
 public:
-    Configurator():allocator(doc.GetAllocator()) {
+    JsonParser():allocator(doc.GetAllocator()) {
         doc.SetObject();
     }
-    virtual ~Configurator() {
+    virtual ~JsonParser() {
     }
 
     bool ParseFile(const std::string &fname) {
