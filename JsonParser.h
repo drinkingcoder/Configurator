@@ -11,6 +11,8 @@
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
 
+#define CHECK_CONDITION(cond, msg) assert(cond && msg)
+
 class JsonParser {
 public:
     JsonParser():allocator(doc.GetAllocator()) {
@@ -32,6 +34,7 @@ public:
     bool ParseString(const std::string &content) {
         std::cout << "content :" << std::endl << content << std::endl;
         doc.Parse(content.c_str());
+        std::cout << "Parsed." << std::endl;
         return true;
     }
     void PrintJson() {
@@ -46,24 +49,34 @@ public:
     }
 
     float GetFloat(const char *variable) {
-        assert(doc[variable].IsFloat());
+        CHECK_CONDITION(doc[variable].IsFloat(), variable);
         return doc[variable].GetFloat();
     }
     int GetInt(const char *variable) {
-        assert(doc[variable].IsInt());
+        CHECK_CONDITION(doc[variable].IsInt(), variable);
         return doc[variable].GetInt();
     }
     const char * GetString(const char *variable) {
-        assert(doc[variable].IsString());
+        CHECK_CONDITION(doc[variable].IsString(), variable);
         return doc[variable].GetString();
     }
 
+    std::vector<float> GetFloatVec(const char * variable) {
+        CHECK_CONDITION(doc[variable].IsArray(), variable);
+        std::vector<float> res;
+        const rapidjson::Value &v = doc[variable];
+        for (auto i = 0; i < v.Size(); i++) {
+            res[i] = v[i].GetFloat();
+        }
+        return res;
+    }
+
     std::vector<int> GetIntVec(const char *variable) {
-        assert(doc[variable].IsArray());
+        CHECK_CONDITION(doc[variable].IsArray(), variable);
         std::vector<int> res;
         const rapidjson::Value &v = doc[variable];
         res.resize(v.Size());
-        for(auto i = 0; i < v.Size(); i++) {
+        for (auto i = 0; i < v.Size(); i++) {
             res[i] = v[i].GetInt();
         }
         return res;
